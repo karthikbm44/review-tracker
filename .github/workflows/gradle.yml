@@ -1,0 +1,35 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: 
+      - "**"
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Change permissions to 'write' to enable dependency submission
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
+
+      - name: Setup Gradle and build
+        uses: gradle/actions/setup-gradle@v3 # Use v3 for latest stable features
+        with:
+          # This automatically enables dependency submission
+          cache-read-only: false
+          dependency-graph: generate
+          
+      - name: Run build with Gradle Wrapper
+        run: ./gradlew build
